@@ -1,0 +1,7 @@
+/.idea
+/build
+
+.DS_Store
+/fsbeat
+/fsbeat.test
+*.pyc
