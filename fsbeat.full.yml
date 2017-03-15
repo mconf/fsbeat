@@ -5,6 +5,10 @@
 fsbeat:
   # Defines how often an event is sent to the output
   period: 1s
+  max.buffer: 20
+  freeswitch.server: "localhost"
+  freeswitch.port: "8021"
+  freeswitch.auth: "ClueCon"
 
 #================================ General ======================================
 
