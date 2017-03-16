@@ -5,6 +5,8 @@ Welcome to Fsbeat.
 Ensure that this folder is at the following location:
 `${GOPATH}/github.com/mconftec`
 
+> Tip: As this is a private repository, you should consider running `git config --global url."git@github.com:".insteadOf "https://github.com/"` to enable `go get` from a private repository.
+
 ## Getting Started with Fsbeat
 
 ### Requirements

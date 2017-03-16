@@ -19,6 +19,20 @@ type Fsbeat struct {
   client publisher.Client
 }
 
+type FSConnection struct {
+  c *Connection
+  address string
+  server string
+  port string
+  auth string
+}
+
+type IFSConnection interface {
+  getConnection() (*Connection, error)
+  configureConnection()
+  closeConnection(events chan *Event)
+}
+
 // Creates beater
 func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
   config := config.DefaultConfig
@@ -37,33 +51,35 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
   logp.Info("fsbeat is running! Hit CTRL-C to stop it.")
 
   bt.client = b.Publisher.Connect()
-  //ticker := time.NewTicker(bt.config.Period)
 
-  c, err := getConnection(bt.config.FSServer,
-                          bt.config.FSPort,
-                          bt.config.FSAuth)
+  // Creates a new FreeSWITCH connection struct and initializes it.
+  fsc, err := createFSConnection(bt.config.FSServer,
+                              bt.config.FSPort,
+                              bt.config.FSAuth)
 
   if err != nil {
-    logp.Err("Error getting connection to FreeSWITCH server.")
+    logp.Err("Error while connecting to FreeSWITCH (%s).", fsc.address)
+
     return nil
   }
 
-  c.configure()
+  // Configures the new FreeSWITCH connection.
+  fsc.configureConnection()
 
+  // Creates the channel used to communicate events received from FreeSWITCH.
   events := make(chan *Event, bt.config.MaxBuffer)
 
-  go c.getEvents(events)
+  // Launches goroutine to received events from FreeSWITCH.
+  go fsc.getEvents(events)
 
   var ev *Event
   for {
     select {
     case <-bt.done:
-      // TODO: Change to defer?
-      c.Close()
+      fsc.closeConnection(events)
+
       return nil
     case ev = <-events:
-    // TODO: Do we need a case for ticker? I don't think so.
-    //case <-ticker.C:
     }
 
     // TODO: Change type to 'esl' or something like that?
@@ -72,15 +88,13 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
       "type":       b.Name,
     }
 
-    // Copy all fields from ev to event.
+    // Copies all fields from ev to event.
     for k, v := range ev.Header {
       event[k] = v
     }
 
-    // TODO: Remove it.
-    fmt.Println(event)
     bt.client.PublishEvent(event)
-    logp.Info("Event sent")
+    logp.Info("Event sent.")
   }
 }
 
@@ -89,35 +103,61 @@ func (bt *Fsbeat) Stop() {
   close(bt.done)
 }
 
-func getConnection(FSServer string,
-                   FSPort string,
-                   FSAuth string) (*Connection, error) {
+func createFSConnection(FSServer string,
+                        FSPort string,
+                        FSAuth string) (*FSConnection, error) {
   s := []string{FSServer, FSPort}
   address := strings.Join(s, ":")
 
-  c, err := Dial(address, FSAuth)
+  fsc := &FSConnection{address: address,
+                       server: FSServer,
+                       port: FSPort,
+                       auth: FSAuth}
+
+  c, err := fsc.getConnection()
+  if err == nil {
+    fsc.c = c
+  }
+
+  return fsc, err
+}
+
+func (fsc *FSConnection) getConnection() (*Connection, error) {
+  logp.Info("Trying to connect to FreeSWITCH (%s).", fsc.address)
+
+  c, err := Dial(fsc.address, fsc.auth)
 
   return c, err
 }
 
-func (c *Connection) configure() {
+func (fsc *FSConnection) closeConnection(events chan *Event) {
+  logp.Info("Closing connection to FreeSWITCH (%s) and channels.", fsc.address)
+
+  fsc.c.Close()
+  close(events)
+}
+
+func (fsc *FSConnection) configureConnection() {
+  logp.Info("Configuring connection to FreeSWITCH (%s).", fsc.address)
+
   const dest = "sofia/internal/1000%127.0.0.1"
   const dialplan = "&socket(localhost:9090 async)"
 
-  c.Send("events json ALL")
-  c.Send(fmt.Sprintf("bgapi originate %s %s", dest, dialplan))
+  if fsc.c == nil {
+    fmt.Println("fsc.c is nil.")
+  }
+
+  fsc.c.Send("events json ALL")
+  fsc.c.Send(fmt.Sprintf("bgapi originate %s %s", dest, dialplan))
 }
 
-func (c *Connection) getEvents(events chan<- *Event) {
+func (fsc *FSConnection) getEvents(events chan<- *Event) {
+  c := fsc.c
+
   for {
     ev, err := c.ReadEvent()
     if err != nil {
-      logp.Err("Error reading event.")
-    }
-
-    // TODO: Is this really necessary?
-    if ev.Get("Answer-State") == "hangup" {
-      break
+      logp.Err("Error while reading event.")
     }
 
     events <- ev
