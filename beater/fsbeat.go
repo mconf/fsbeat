@@ -10,7 +10,7 @@ import (
   "github.com/elastic/beats/libbeat/logp"
   "github.com/elastic/beats/libbeat/publisher"
 
-  "github.com/kmyokoyama/fsbeat/config"
+  "github.com/mconftec/fsbeat/config"
 )
 
 type Fsbeat struct {
@@ -39,7 +39,6 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
   bt.client = b.Publisher.Connect()
   //ticker := time.NewTicker(bt.config.Period)
 
-  fmt.Println(bt.config.FSServer)
   c, err := getConnection(bt.config.FSServer,
                           bt.config.FSPort,
                           bt.config.FSAuth)
@@ -78,6 +77,7 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
       event[k] = v
     }
 
+    // TODO: Remove it.
     fmt.Println(event)
     bt.client.PublishEvent(event)
     logp.Info("Event sent")

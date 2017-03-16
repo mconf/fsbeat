@@ -3,7 +3,7 @@
 Welcome to Fsbeat.
 
 Ensure that this folder is at the following location:
-`${GOPATH}/github.com/kmyokoyama`
+`${GOPATH}/github.com/mconftec`
 
 ## Getting Started with Fsbeat
 
@@ -24,7 +24,7 @@ It will create a clean git history for each major step. Note that you can always
 To push Fsbeat in the git repository, run the following commands:
 
 ```
-git remote set-url origin https://github.com/kmyokoyama/fsbeat
+git remote set-url origin https://github.com/mconftec/fsbeat
 git push origin master
 ```
 
@@ -99,9 +99,9 @@ make clean
 To clone Fsbeat from the git repository, run the following commands:
 
 ```
-mkdir -p ${GOPATH}/github.com/kmyokoyama
-cd ${GOPATH}/github.com/kmyokoyama
-git clone https://github.com/kmyokoyama/fsbeat
+mkdir -p ${GOPATH}/github.com/mconftec
+cd ${GOPATH}/github.com/mconftec
+git clone https://github.com/mconftec/fsbeat
 ```
 
 
