@@ -90,9 +90,11 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
 
     // Copies all fields from ev to event.
     for k, v := range ev.Header {
+      k = normalize_field(k)
       event[k] = v
     }
 
+    fmt.Println(event)
     bt.client.PublishEvent(event)
     logp.Info("Event sent.")
   }
@@ -162,4 +164,13 @@ func (fsc *FSConnection) getEvents(events chan<- *Event) {
 
     events <- ev
   }
+}
+
+// It follows the conventions defined by Beat:
+// https://www.elastic.co/guide/en/beats/libbeat/current/event-conventions.html
+func normalize_field(field string) string {
+      field = strings.ToLower(field)
+      field = strings.Replace(field, "-", "_", -1)
+
+      return field
 }
