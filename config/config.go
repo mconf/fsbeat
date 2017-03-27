@@ -6,7 +6,7 @@ package config
 import "time"
 
 type Config struct {
-	Period time.Duration `config:"period"`
+  Period time.Duration `config:"period"`
   MaxBuffer int `config:"max.buffer"`
   FSServer string `config:"freeswitch.server"`
   FSPort string `config:"freeswitch.port"`
@@ -14,7 +14,7 @@ type Config struct {
 }
 
 var DefaultConfig = Config{
-	Period: 1 * time.Second,
+  Period: 1 * time.Second,
   MaxBuffer: 20,
   FSServer: "localhost",
   FSPort: "8021",
