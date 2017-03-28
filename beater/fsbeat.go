@@ -54,8 +54,8 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
 
   // Creates a new FreeSWITCH connection struct and initializes it.
   fsc, err := createFSConnection(bt.config.FSServer,
-                              bt.config.FSPort,
-                              bt.config.FSAuth)
+                                 bt.config.FSPort,
+                                 bt.config.FSAuth)
 
   if err != nil {
     logp.Err("Error while connecting to FreeSWITCH (%s).", fsc.address)
