@@ -64,7 +64,7 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
   }
 
   // Configures the new FreeSWITCH connection.
-  fsc.configureConnection()
+  fsc.configureConnection(bt.config.FSEvents)
 
   // Creates the channel used to communicate events received from FreeSWITCH.
   events := make(chan *Event, bt.config.MaxBuffer)
@@ -139,7 +139,7 @@ func (fsc *FSConnection) closeConnection(events chan *Event) {
   close(events)
 }
 
-func (fsc *FSConnection) configureConnection() {
+func (fsc *FSConnection) configureConnection(FSEvents string) {
   logp.Info("Configuring connection to FreeSWITCH (%s).", fsc.address)
 
   const dest = "sofia/internal/1000%127.0.0.1"
@@ -149,7 +149,7 @@ func (fsc *FSConnection) configureConnection() {
     fmt.Println("fsc.c is nil.")
   }
 
-  fsc.c.Send("events json ALL")
+  fsc.c.Send("events json " + FSEvents)
   fsc.c.Send(fmt.Sprintf("bgapi originate %s %s", dest, dialplan))
 }
 

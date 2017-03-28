@@ -9,3 +9,4 @@ fsbeat:
   freeswitch.server: "localhost"
   freeswitch.port: "8021"
   freeswitch.auth: "ClueCon"
+  freeswitch.events: "all"

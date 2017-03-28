@@ -11,6 +11,7 @@ type Config struct {
   FSServer string `config:"freeswitch.server"`
   FSPort string `config:"freeswitch.port"`
   FSAuth string `config:"freeswitch.auth"`
+  FSEvents string `config:"freeswitch.events"`
 }
 
 var DefaultConfig = Config{
@@ -19,4 +20,5 @@ var DefaultConfig = Config{
   FSServer: "localhost",
   FSPort: "8021",
   FSAuth: "ClueCon",
+  FSEvents: "all",
 }
