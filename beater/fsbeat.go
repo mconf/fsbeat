@@ -94,9 +94,7 @@ func (bt *Fsbeat) Run(b *beat.Beat) error {
       event[k] = v
     }
 
-    fmt.Println(event)
     bt.client.PublishEvent(event)
-    logp.Info("Event sent.")
   }
 }
 
