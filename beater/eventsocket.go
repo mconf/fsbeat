@@ -228,7 +228,9 @@ func (h *Connection) readOne() bool {
       resp.Header[capitalize(k)] = v
     }
     if v, _ := resp.Header["_body"]; v != "" {
-      resp.Body = v
+      if v != nil {
+        resp.Body = v.(string)
+      }
       delete(resp.Header, "_body")
     } else {
       resp.Body = ""
@@ -444,7 +446,7 @@ func (h *Connection) ExecuteUUID(uuid, appName, appArg string) (*Event, error) {
 }
 
 // EventHeader represents events as a pair of key:value.
-type EventHeader map[string]string
+type EventHeader map[string]interface{}
 
 // Event represents a FreeSWITCH event.
 type Event struct {
@@ -462,13 +464,13 @@ func (r *Event) String() string {
 
 // Get returns an Event value, or "" if the key doesn't exist.
 func (r *Event) Get(key string) string {
-  return r.Header[key]
+  return r.Header[key].(string)
 }
 
 // GetInt returns an Event value converted to int, or an error if conversion
 // is not possible.
 func (r *Event) GetInt(key string) (int, error) {
-  n, err := strconv.Atoi(r.Header[key])
+  n, err := strconv.Atoi(r.Header[key].(string))
   if err != nil {
     return 0, err
   }
