@@ -143,7 +143,8 @@ func Dial(addr, passwd string) (*Connection, error) {
 
 // readLoop calls readOne until a fatal error occurs, then close the socket.
 func (h *Connection) readLoop() {
-  for h.readOne() {
+  for {
+    h.readOne()
   }
   h.Close()
 }

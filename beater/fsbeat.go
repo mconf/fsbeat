@@ -143,10 +143,6 @@ func (fsc *FSConnection) configureConnection(FSEvents string) {
   const dest = "sofia/internal/1000%127.0.0.1"
   const dialplan = "&socket(localhost:9090 async)"
 
-  if fsc.c == nil {
-    fmt.Println("fsc.c is nil.")
-  }
-
   fsc.c.Send("events json " + FSEvents)
   fsc.c.Send(fmt.Sprintf("bgapi originate %s %s", dest, dialplan))
 }
@@ -158,9 +154,9 @@ func (fsc *FSConnection) getEvents(events chan<- *Event) {
     ev, err := c.ReadEvent()
     if err != nil {
       logp.Err("Error while reading event.")
+    } else if ev != nil {
+      events <- ev
     }
-
-    events <- ev
   }
 }
 
