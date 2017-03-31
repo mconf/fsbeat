@@ -50,7 +50,7 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 func (bt *Fsbeat) Run(b *beat.Beat) error {
 	logp.Info("fsbeat is running! Hit CTRL-C to stop it.")
 
-  log_disclaimer()
+	log_disclaimer()
 
 	bt.client = b.Publisher.Connect()
 
@@ -172,5 +172,5 @@ func normalize_field(field string) string {
 }
 
 func log_disclaimer() {
-  logp.Info("Copyright 2013 Alexandre Fiori (go-eventsocket)")
+	logp.Info("Copyright 2013 Alexandre Fiori (go-eventsocket)")
 }
