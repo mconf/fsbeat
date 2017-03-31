@@ -50,6 +50,8 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 func (bt *Fsbeat) Run(b *beat.Beat) error {
 	logp.Info("fsbeat is running! Hit CTRL-C to stop it.")
 
+  log_disclaimer()
+
 	bt.client = b.Publisher.Connect()
 
 	// Creates a new FreeSWITCH connection struct and initializes it.
@@ -167,4 +169,8 @@ func normalize_field(field string) string {
 	field = strings.Replace(field, "-", "_", -1)
 
 	return field
+}
+
+func log_disclaimer() {
+  logp.Info("Copyright 2013 Alexandre Fiori (go-eventsocket)")
 }
