@@ -148,16 +148,20 @@ We created a Docker image for Fsbeat. The corresponding Dockerfile is inside the
 
 Inside the folder where the Dockerfile resides, run
 
+```
 sudo docker build . -t fsbeat
+```
 
 -t fsbeat: give the new image a name, in this case, “fsbeat”
 
 2. Run the image:
 
+```
 sudo docker run -d -ti --rm -u root:root --network=host \
 -v /absolute/path/to/fsbeat.yml:/usr/share/fsbeat/fsbeat.yml \
 -v /absolute/path/to/certs:/opt/beats/certs \
 fsbeat
+```
 
 -d: run in the background.
 
