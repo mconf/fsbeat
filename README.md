@@ -140,6 +140,39 @@ For a complete list of releases check out [Releases](https://github.com/mconftec
 
 Each release is accompanied by a Debian package (.deb) to install Fsbeat. If other formats are needed, it is possible to cross-compile Fsbeat source code and look for the desired binary at `build/upload/` directory following the instructions above.
 
+# Docker
+
+We created a Docker image for Fsbeat. The corresponding Dockerfile is inside the docker folder. Next we describe how to generate and run an Fsbeat image.
+
+1. Build the image from the Dockerfile:
+
+Inside the folder where the Dockerfile resides, run
+
+sudo docker build . -t fsbeat
+
+-t fsbeat: give the new image a name, in this case, “fsbeat”
+
+2. Run the image:
+
+sudo docker run -d -ti --rm -u root:root --network=host \
+-v /absolute/path/to/fsbeat.yml:/usr/share/fsbeat/fsbeat.yml \
+-v /absolute/path/to/certs:/opt/beats/certs \
+fsbeat
+
+-d: run in the background.
+
+-u=root: run Fsbeat as root.
+
+--rm: remove the container when it stops running.
+
+--network=host: we need this for Fsbeat to be able to establish a telnet connection with FreeSWITCH running on the host.
+
+-v /absolute/path/to/fsbeat.yml:/usr/share/fsbeat/fsbeat.yml: copy the configuration from the host into the container. The paths are absolute.
+
+-v /absolute/path/to/certs:/opt/beats/certs: copy the certificates and key directory from the host into the container. The paths are absolute.
+
+fsbeat: which image to run. If you built and image with the option -t fsbeat, then you will have an image called fsbeat.
+
 # Credits
 
 Fsbeat uses [go-eventsocket](https://github.com/fiorix/go-eventsocket) by Alexander Fiorix which is released under BSD 3-Clause License.
