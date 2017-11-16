@@ -173,6 +173,8 @@ fsbeat
 | -v /absolute/path/to/certs:/opt/beats/certs | copy the certificates and key directory from the host into the container. The paths are absolute |
 | fsbeat | which image to run. If you built and image with the option -t fsbeat, then you will have an image called fsbeat |
 
+If you want to limit the resources the container has access to you can use the flags `-m` ,`--memory-swap`, `--memory-swappiness` and `--cpus`. [See more about this here.](https://docs.docker.com/engine/admin/resource_constraints/)
+
 # Credits
 
 Fsbeat uses [go-eventsocket](https://github.com/fiorix/go-eventsocket) by Alexander Fiorix which is released under BSD 3-Clause License.
